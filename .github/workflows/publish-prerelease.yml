@@ -1,0 +1,44 @@
+name: Publish Pre-release
+
+on:
+  push:
+    tags:
+      - 'v*-rc*'    # Triggers on release candidates (e.g., v1.0.0-rc1)
+      - 'v*-alpha*' # Triggers on alpha builds
+      - 'v*-beta*'  # Triggers on beta builds
+
+jobs:
+  publish-prerelease:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Create Pre-release
+        run: |
+          GITHUB_REF="${{ github.event.ref }}"
+          GITHUB_REF_NAME="${{ github.event.ref_name }}"
+          cat > PRERELEASE.md <<EOF
+          # Pre-release $GITHUB_REF_NAME ($GITHUB_REF) Installation Instructions
+          Run the following:
+          \`\`\`shell
+            pip install mypackage==${GITHUB_REF_NAME#v}
+          \`\`\`
+          EOF
+
+      - name: Preview Pre-release
+        run: |
+          cat PRERELEASE.md
+
+      - name: Create and Publish GitHub Pre-release
+        uses: softprops/action-gh-release@v3
+        with:
+          body_path: PRERELEASE.md
+          files: PREREALEASE.md
+          prerelease: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
