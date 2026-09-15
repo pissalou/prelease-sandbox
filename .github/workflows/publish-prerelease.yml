@@ -19,11 +19,11 @@ jobs:
 
       - name: Create Pre-release
         run: |
-          GITHUB_REF="${{ github.event.ref }}"
-          GITHUB_REF_NAME="${{ github.event.ref_name }}"
+          GITHUB_REF="${{ github.ref }}"
+          GITHUB_REF_NAME="${{ github.ref_name }}"
           cat > PRERELEASE.md <<EOF
-          # Pre-release $GITHUB_REF_NAME ($GITHUB_REF) Installation Instructions
-          Run the following:
+          # Pre-release $GITHUB_REF_NAME Installation Instructions
+          Run the following to install the pre-release binary for git ref $GITHUB_REF:
           \`\`\`shell
             pip install mypackage==${GITHUB_REF_NAME#v}
           \`\`\`
