@@ -16,6 +16,16 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
+      
+      - run: |
+          mkdir -p path/to/artifact
+          echo hello > path/to/artifact/world.txt
+      
+      - uses: actions/upload-artifact@v7
+        id: artifact_upload
+        with:
+          path: path/to/artifact/world.txt
+          archive: false
 
       - name: Create Pre-release
         run: |
@@ -25,6 +35,7 @@ jobs:
           # Pre-release $GITHUB_REF_NAME Installation Instructions
           Run the following to install the pre-release binary for git $GITHUB_REF:
           \`\`\`shell
+            wget ${{ steps.artifact_upload.outputs.artifact-url }}
             pip install mypackage==${GITHUB_REF_NAME#v}
           \`\`\`
           EOF
